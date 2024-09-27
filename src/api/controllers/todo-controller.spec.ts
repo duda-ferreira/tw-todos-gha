@@ -21,7 +21,7 @@ describe('TodoController (e2e)', () => {
 
   it('Get todo by id must return status 200', async () => {
     const response = await request(app.server)
-      .get('/api/todos/10')
+      .get('/api/todos/1')
       .send();
 
     expect(response.status).toBe(200);
@@ -91,7 +91,7 @@ describe('TodoController (e2e)', () => {
 
   it('Delete todo by id must return status 204', async () => {
     const response = await request(app.server)
-      .delete('/api/todos/10')
+      .delete('/api/todos/1')
       .send();
 
     expect(response.status).toBe(204);
