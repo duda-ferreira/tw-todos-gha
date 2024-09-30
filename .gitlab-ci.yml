@@ -22,6 +22,9 @@ test:
   artifacts:
     paths:
       - coverage/
+  only:
+    - merge_requests
+    - master
 
 build:
   stage: build
@@ -31,5 +34,8 @@ build:
   artifacts:
     paths:
       - build/
+  only:
+    - merge_requests
+    - master
 
 
