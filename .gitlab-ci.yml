@@ -6,9 +6,9 @@ stages:
   - deploy
 
 include:
-  - local: 'path/to/build.yml'
-  - local: 'path/to/deploy.yml'
-  - local: 'path/to/test.yml'
+  - local: 'ci/test-job.yml'
+  - local: 'ci/build-job.yml'
+  - local: 'ci/deploy-job.yml'
 
 before_script:
   - npm install  # Instala dependências antes de cada job
@@ -18,3 +18,5 @@ build:
   script:
     - echo "Building the project..."
     - npm ci  # Instala dependências com npm ci
+
+# Continue com os outros jobs...
