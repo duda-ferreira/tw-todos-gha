@@ -46,7 +46,8 @@ auto-bump:
     - git checkout -b master
     - cz bump --yes  # Executa o bump automático e faz push para master
     - git push origin master:$CI_COMMIT_REF_NAME
-    - TAG=$(grep -m 1 -oP '\d+\.\d+\.\d+' CHANGELOG.md)  # Obtém a nova versão do software e salva em artifacts
+    - TAG=$(grep -m 1 -oP '\d+\.\d+\.\d+' CHANGELOG.md)  # Captura a versão do changelog
+    - git tag $TAG  # Cria a tag
     - echo "#!/bin/sh" >> variables
     - echo "export TAG='$TAG'" >> variables
     - git push origin $TAG
