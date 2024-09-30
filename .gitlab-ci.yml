@@ -33,6 +33,7 @@ auto-bump:
     - eval `ssh-agent -s`
     - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' | ssh-add - > /dev/null  # Adiciona a chave SSH
     - npm install -g commitizen  # Instala o Commitizen globalmente
+    - commitizen --version
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_PUBLIC_KEY" >> ~/.ssh/id_rsa.pub
@@ -44,7 +45,7 @@ auto-bump:
     - git config --global user.email "${CI_EMAIL}" && git config --global user.name "${CI_USERNAME}"
     - 'exists=`git show-ref refs/heads/master` && if [ -n "$exists" ]; then git branch -D master; fi'
     - git checkout -b master
-    - cz bump --yes  # Executa o bump automático e faz push para master
+    - cz bump   # Executa o bump automático e faz push para master
     - git push origin master:$CI_COMMIT_REF_NAME
     - TAG=$(grep -m 1 -oP '\d+\.\d+\.\d+' CHANGELOG.md)  # Captura a versão do changelog
     - git tag $TAG  # Cria a tag
