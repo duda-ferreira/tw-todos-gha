@@ -2,3 +2,8 @@ include:
   - local: 'ci/test-job.yml'
   - local: 'ci/build-job.yml'
   - local: 'ci/deploy-job.yml'
+
+stages:
+  - test
+  - build
+  - deploy
