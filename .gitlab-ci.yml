@@ -1,9 +1,11 @@
-stages:
-  - test
-  - build
+image: node:latest
+
+services:
+  - docker:dind
 
 variables:
-  NODE_VERSION: "20"
+  API_IMAGE_NAME: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+  NODE_VERSION: "20"  # Defina a versão do Node.js, se necessário
 
 before_script:
   - apt-get update
@@ -13,23 +15,44 @@ before_script:
   - apt-get install -y nodejs
   - npm install -g npm@latest
 
+stages:
+  - test
+  - auto-bump
+
 test:
   stage: test
-  script: 
-    - npm ci
-    - npm run lint
-    - npm run test:coverage
-  artifacts:
-    paths:
-      - coverage/
-
-build:
-  stage: build
+  before_script:
+    - npm install  # Instala as dependências do projeto
   script:
-    - npm ci
-    - npm run build
+    - npm run test  # Execute os testes definidos no seu package.json
+
+auto-bump:
+  stage: auto-bump
+  before_script:
+    - "which ssh-agent || ( apt-get update -qy && apt-get install openssh-client -qqy )"
+    - eval `ssh-agent -s`
+    - echo "${SSH_PRIVATE_KEY}" | tr -d '\r' | ssh-add - > /dev/null  # Adiciona a chave SSH
+    - npm install -g commitizen  # Instala o Commitizen globalmente
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_PUBLIC_KEY" >> ~/.ssh/id_rsa.pub
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  dependencies:
+    - test
+  script:
+    - git remote set-url origin git@gitlab.com:mariaeduardaferreiraa7h/tw-todos-gha.git  # Configuração do git
+    - git config --global user.email "${CI_EMAIL}" && git config --global user.name "${CI_USERNAME}"
+    - 'exists=`git show-ref refs/heads/master` && if [ -n "$exists" ]; then git branch -D master; fi'
+    - git checkout -b master
+    - cz bump --yes  # Executa o bump automático e faz push para master
+    - git push origin master:$CI_COMMIT_REF_NAME
+    - TAG=$(head -n 1 VERSION)  # Obtém a nova versão do software e salva em artifacts
+    - echo "#!/bin/sh" >> variables
+    - echo "export TAG='$TAG'" >> variables
+    - git push origin $TAG
+  only:
+    refs:
+      - master
   artifacts:
     paths:
-      - build/
-
-
+      - variables
