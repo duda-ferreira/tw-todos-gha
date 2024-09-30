@@ -1,0 +1,35 @@
+stages:
+  - test
+  - build
+
+variables:
+  NODE_VERSION: "20"
+
+before_script:
+  - apt-get update
+  - apt-get install -y curl
+  - curl -sL https://deb.nodesource.com/setup_$NODE_VERSION.x -o nodesource_setup.sh
+  - bash nodesource_setup.sh
+  - apt-get install -y nodejs
+  - npm install -g npm@latest
+
+test:
+  stage: test
+  script: 
+    - npm ci
+    - npm run lint
+    - npm run test:coverage
+  artifacts:
+    paths:
+      - coverage/
+
+build:
+  stage: build
+  script:
+    - npm ci
+    - npm run build
+  artifacts:
+    paths:
+      - build/
+
+
