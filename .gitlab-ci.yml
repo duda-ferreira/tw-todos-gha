@@ -6,12 +6,14 @@ stages:
 
 variables:
   DOCKER_IMAGE: dudaferreira/tw-todos-gha
+  DOCKER_DRIVER: overlay2  # O driver Docker pode ser necessário
 
 build:
   stage: build
   services:
-    - docker:dind  # Ativando o serviço Docker
-  script: 
+    - name: docker:dind  # Ativando o serviço Docker
+      command: ["--host=tcp://0.0.0.0:2375"]  # Expondo o daemon Docker
+  script:
     - echo "Starting Docker service..."
     - docker info  # Verifica se o Docker está disponível
     - echo "Building Docker image"
