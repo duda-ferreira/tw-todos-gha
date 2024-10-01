@@ -10,16 +10,18 @@ variables:
 build:
   stage: build
   services:
-    - docker:dind  # Ativa o serviço Docker-in-Docker
+    - docker:dind  # Ativando o serviço Docker
   script: 
+    - echo "Starting Docker service..."
+    - docker info  # Verifica se o Docker está disponível
     - echo "Building Docker image"
-    - docker build -t $DOCKER_IMAGE .  # Certifique-se de que o Dockerfile está correto
+    - docker build -t $DOCKER_IMAGE .  # Constrói a imagem Docker
 
 deploy:
   stage: deploy
   image: docker:latest  # Usando Docker para o deploy
   services:
-    - docker:dind
+    - docker:dind  # Ativando o serviço Docker
   script:
     - echo "Logging in to Docker Hub.."
     - echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
