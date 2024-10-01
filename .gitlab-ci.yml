@@ -10,9 +10,6 @@ include:
   - local: 'ci/build-job.yml'
   - local: 'ci/deploy-job.yml'
 
-before_script:
-  - npm install  # Instala dependências antes de cada job
-
 build:
   stage: build
   script:
