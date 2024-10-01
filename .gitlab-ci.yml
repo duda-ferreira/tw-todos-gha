@@ -1,4 +1,4 @@
-image: node:18
+image: node:18  # Imagem base para o job
 
 stages:
   - build
@@ -8,17 +8,19 @@ variables:
   DOCKER_IMAGE: dudaferreira/tw-todos-gha
 
 before_script:
-  - npm install
+  - apk add --no-cache docker  # Adiciona o Docker se necessário
 
 build:
   stage: build
+  services:
+    - docker:dind  # Ativa o serviço Docker
   script: 
     - echo "Building Docker image"
-    - docker build -t $DOCKER_IMAGE .
+    - docker build -t $DOCKER_IMAGE .  # Constrói a imagem Docker
 
 deploy:
   stage: deploy
-  image: docker:latest
+  image: docker:latest  # Usando Docker para o deploy
   services:
     - docker:dind
   script:
