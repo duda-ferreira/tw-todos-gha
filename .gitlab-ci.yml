@@ -1,0 +1,13 @@
+docker-build:
+  image: docker:latest
+  stage: build
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u "$DOCKER_USERNAME" -p "DOCKER_TOKEN"
+
+  script:
+    - echo ' @@@ Building Images ..... '
+    - docker build --tag dudaferreira/tw-todos-gha-gitlab
+    - docker push dudaferreira/tw-todos-gha-gitlab
+    - echo 'Done -- image ok !'
