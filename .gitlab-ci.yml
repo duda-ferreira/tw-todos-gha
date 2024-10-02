@@ -1,33 +1,13 @@
-image: node:18  # Imagem base para o job
-
-stages:
-  - build
-  - deploy
-
-variables:
-  DOCKER_IMAGE: dudaferreira/tw-todos-gha
-  DOCKER_DRIVER: overlay2  # O driver Docker pode ser necessário
-
-build:
+docker-build:
+  image: docker:latest
   stage: build
   services:
-    - name: docker:dind  # Ativando o serviço Docker
-      command: ["--host=tcp://0.0.0.0:2375"]  # Expondo o daemon Docker
-  script:
-    - echo "Starting Docker service..."
-    - docker info  # Verifica se o Docker está disponível
-    - echo "Building Docker image"
-    - docker build -t $DOCKER_IMAGE .  # Constrói a imagem Docker
+    - docker:dind
+  before_script:
+    - docker login -u "$DOCKER_USERNAME" -p "DOCKER_TOKEN"
 
-deploy:
-  stage: deploy
-  image: docker:latest  # Usando Docker para o deploy
-  services:
-    - docker:dind  # Ativando o serviço Docker
   script:
-    - echo "Logging in to Docker Hub.."
-    - echo $DOCKER_TOKEN | docker login -u $DOCKER_USERNAME --password-stdin
-    - echo "Pushing Docker image.."
-    - docker push $DOCKER_IMAGE
-  only: 
-    - master
+    - echo ' @@@ Building Images ..... '
+    - docker build --tag dudaferreira/tw-todos-gha
+    - docker push dudaferreira/tw-todos-gha
+    - echo 'Done -- image ok !'
