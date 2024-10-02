@@ -8,6 +8,6 @@ docker-build:
 
   script:
     - echo ' @@@ Building Images ..... '
-    - docker build --tag dudaferreira/tw-todos-gha
-    - docker push dudaferreira/tw-todos-gha
+    - docker build --tag dudaferreira/tw-todos-gha-gitlab
+    - docker push dudaferreira/tw-todos-gha-gitlab
     - echo 'Done -- image ok !'
