@@ -1,4 +1,6 @@
 import { app } from '@/app';
+import exp from 'constants';
+import { title } from 'process';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -103,5 +105,29 @@ describe('TodoController (e2e)', () => {
       .send();
 
     expect(response.status).toBe(404);
+  });
+
+  it('Set todo has done should return 204', async () => {
+    const creationResponse = await request(app.server)
+      .post('api/todos')
+      .send({
+        title: 'Todo 4',
+        describe: 'Todo 4 description'
+      });
+    const { id } = creationResponse.body;
+    const response = await request(app.server)
+      .patch(`/api/todos/${id}/done`)
+      .send();
+    expect(response.status).toBe(204);
+  });
+
+  it('Set todo has done should return 404 when todo is not found', async () => {
+    const response = await request(app.server)
+      .patch('/api/todos/100/done')
+      .send();
+    expect(response.status).toBe(404);
+    expect(response.body).toMatchObject({
+      message: 'Todo not found'
+    });
   });
 });
