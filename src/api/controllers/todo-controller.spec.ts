@@ -1,6 +1,6 @@
 import { app } from '@/app';
-import exp from 'constants';
-import { title } from 'process';
+// import exp from 'constants';
+// import { title } from 'process';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
@@ -116,7 +116,7 @@ describe('TodoController (e2e)', () => {
       });
     const { id } = creationResponse.body;
     const response = await request(app.server)
-      .patch(`/api/todos/${id}/done`)
+      .patch(`/api/todos/${ id }/done`)
       .send();
     expect(response.status).toBe(204);
   });
